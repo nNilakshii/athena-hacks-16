@@ -17,8 +17,8 @@ const Home = () => {
   // Mock data for top recommendations
   const topRecommendations = [
     {
-      firstname: "ANAAYA",
-      lastname: "MEHRA",
+      first_name: "ANAAYA",
+      last_name: "MEHRA",
       current_year: "Senior",
       dept: "NEUROSCIENCE",
       classes: "BISC 408",
@@ -27,8 +27,8 @@ const Home = () => {
       mentor: false
     },
     {
-      firstname: "JOHN",
-      lastname: "SMITH",
+      first_name: "JOHN",
+      last_name: "SMITH",
       current_year: "Senior",
       dept: "COMPUTER SCIENCE",
       classes: "CSCI 401",
@@ -37,8 +37,8 @@ const Home = () => {
       mentor: true
     },
     {
-      firstname: "EMMA",
-      lastname: "WILSON",
+      first_name: "EMMA",
+      last_name: "WILSON",
       current_year: "Junior",
       dept: "PSYCHOLOGY",
       classes: "PSYC 355",
@@ -51,8 +51,8 @@ const Home = () => {
   // Mock data for other users
   const otherUsers = [
     {
-      firstname: "Sarah",
-      lastname: "Chen",
+      first_name: "Sarah",
+      last_name: "Chen",
       current_year: "Junior",
       dept: "COMPUTER SCIENCE",
       classes: "CSCI 401",
@@ -61,8 +61,8 @@ const Home = () => {
       mentor: true
     },
     {
-      firstname: "Michael",
-      lastname: "Park",
+      first_name: "Michael",
+      last_name: "Park",
       current_year: "Senior",
       dept: "BUSINESS",
       classes: "BUAD 302",
@@ -71,8 +71,8 @@ const Home = () => {
       mentor: false
     },
     {
-      firstname: "Emily",
-      lastname: "Rodriguez",
+      first_name: "Emily",
+      last_name: "Rodriguez",
       current_year: "Sophomore",
       dept: "PSYCHOLOGY",
       classes: "PSYC 355",
@@ -81,8 +81,8 @@ const Home = () => {
       mentor: true
     },
     {
-      firstname: "James",
-      lastname: "Wilson",
+      first_name: "James",
+      last_name: "Wilson",
       current_year: "Junior",
       dept: "GLOBAL HEALTH",
       classes: "BISC 408",
@@ -91,8 +91,8 @@ const Home = () => {
       mentor: false
     },
     {
-      firstname: "Sophia",
-      lastname: "Kim",
+      first_name: "Sophia",
+      last_name: "Kim",
       current_year: "Senior",
       dept: "COMPUTER SCIENCE",
       classes: "CSCI 401",
@@ -101,8 +101,8 @@ const Home = () => {
       mentor: true
     },
     {
-      firstname: "David",
-      lastname: "Thompson",
+      first_name: "David",
+      last_name: "Thompson",
       current_year: "Junior",
       dept: "NEUROSCIENCE",
       classes: "BISC 408",
@@ -115,15 +115,16 @@ const Home = () => {
   const CommonCard = ({ user }) => (
     <div className={`commons-card ${user.mentor ? 'mentor-card' : ''}`}>
       <div className="card-header">
+        {user.mentor && <img src="img/mentor.png" alt="Mentor" className="mentor-badge" />}
         <img 
           src={user.image} 
-          alt={`${user.firstname} ${user.lastname}`} 
+          alt={`${user.first_name} ${user.last_name}`} 
           className="profile-image"
         />
         <span className="year-tag">{user.current_year}</span>
       </div>
       <div className="profile-info">
-        <h3 className="profile-name">{user.firstname} {user.lastname}</h3>
+        <h3 className="profile-name">{user.first_name} {user.last_name}</h3>
         <div className="tags-container">
           <span className="tag">{user.dept}</span>
         </div>

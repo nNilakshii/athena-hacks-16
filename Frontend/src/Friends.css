@@ -338,7 +338,7 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .friends-content {
-    padding: 0.5rem;
+    padding: 1rem;
   }
 
   .friends-main {
