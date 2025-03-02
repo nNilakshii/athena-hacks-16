@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   dept: { type: String, required: true },
   classes: { type: [String], required: true },
-  mentor: { type: String, required: true },
+  mentor: { type: Boolean, default: false },
   current_year: { type: String, required: true },
   interests: { type: [String], required: true },
   usc_id: { 
