@@ -1,7 +1,9 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-const UserSchema = new mongoose.Schema({
-  name: { type: String, required: true },
+// Define the schema for the User document
+const userSchema = new mongoose.Schema({
+  firstname: { type: String, required: true },
+  lastname: { type: String, required: true },
   email: { 
     type: String, 
     required: true, 
@@ -9,9 +11,20 @@ const UserSchema = new mongoose.Schema({
     match: [/^[a-zA-Z0-9._%+-]+@usc\.edu$/, "Only USC emails allowed"]
   },
   password: { type: String, required: true },
-  courses: [String],
-  hobbies: [String],
-  createdAt: { type: Date, default: Date.now },
-});
+  dept: { type: String, required: true },
+  classes: { type: [String], required: true },
+  mentor: { type: String, required: true },
+  current_year: { type: String, required: true },
+  interests: { type: [String], required: true },
+  usc_id: { 
+    type: String, 
+    required: true, 
+    length: 10, 
+    match: /^[0-9]{10}$/, // Ensures the field contains exactly 10 digits
+    unique: true 
+  }
+}, { timestamps: true });
 
-module.exports = mongoose.model("User", UserSchema);
+const User = mongoose.model('User', userSchema);
+
+module.exports = User;

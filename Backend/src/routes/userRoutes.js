@@ -1,18 +1,21 @@
+// Signup Route - Only USC Emails Allowed
 const express = require("express");
 const router = express.Router();
-const User = require("../models/users");
+const { check, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { check, validationResult } = require("express-validator");
+const User = require("../models/User"); // Assuming the User model is stored in this location
 
-
-// Signup Route - Only USC Emails Allowed
 router.post(
   "/save-profile",
   [
-    check("name", "Name is required").not().isEmpty(),
+    check("firstname", "First name is required").not().isEmpty(),
+    check("lastname", "Last name is required").not().isEmpty(),
     check("email", "Invalid USC email").matches(/^[a-zA-Z0-9._%+-]+@usc\.edu$/),
     check("password", "Password must be at least 6 characters").isLength({ min: 6 }),
+    check("usc_id", "USC ID must be a 10 digit number").matches(/^[0-9]{10}$/),
+    check("classes", "At least one class is required").isArray().notEmpty(),
+    check("interests", "At least one interest is required").isArray().notEmpty(),
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -20,25 +23,37 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { name, email, password, courses, hobbies } = req.body;
+    const { firstname, lastname, email, password, dept, classes, mentor, current_year, interests, usc_id } = req.body;
 
     try {
+      // Check if the user already exists by email or usc_id
       let user = await User.findOne({ email });
       if (user) {
-        return res.status(400).json({ msg: "User already exists" });
+        return res.status(400).json({ msg: "User already exists with this email" });
+      }
+
+      // Check if the USC ID already exists
+      user = await User.findOne({ usc_id });
+      if (user) {
+        return res.status(400).json({ msg: "User already exists with this USC ID" });
       }
 
       // Hash password
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
 
-      // Create user
+      // Create the user
       user = new User({
-        name,
+        firstname,
+        lastname,
         email,
         password: hashedPassword,
-        courses,
-        hobbies
+        dept,
+        classes,
+        mentor,
+        current_year,
+        interests,
+        usc_id
       });
 
       await user.save();
@@ -47,6 +62,7 @@ router.post(
       const payload = { user: { id: user.id } };
       const token = jwt.sign(payload, process.env.JWT_KEY, { expiresIn: "1h" });
 
+      // Send the token in the response
       res.json({ token });
 
     } catch (err) {
@@ -58,24 +74,12 @@ router.post(
 
 
 // GET all users recommendations
-router.get("/get-records", async (req, res) => {
+router.get("/get-friends", async (req, res) => {
   try {
     const users = await User.find();
     res.json(users);
   } catch (err) {
     res.status(500).json({ error: err.message });
-  }
-});
-
-// POST new user
-router.post("/", async (req, res) => {
-  try {
-    const { name, email, courses, hobbies } = req.body;
-    const newUser = new User({ name, email, courses, hobbies });
-    await newUser.save();
-    res.status(201).json(newUser);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
   }
 });
 
