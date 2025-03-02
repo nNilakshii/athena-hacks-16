@@ -8,6 +8,7 @@ const User = require("../models/users"); // Assuming the User model is stored in
 const Friend = require('../models/friends'); // Assuming the Friend model is in a 'models' directory
 const authMiddleware = require("../middleware/auth");
 const { getStudyBuddyRecommendations } = require("../utils/matchingEngine");
+const Chat = require('../models/chat'); 
 
 router.post(
   "/save-profile",
@@ -334,6 +335,52 @@ router.get("/recommend-buddies",  async (req, res) => {
       res.status(500).json({ error: "Failed to fetch study buddy recommendations" });
     }
   });
+
+
+// CHAT
+router.get("/get-chat-history", async (req, res) => {
+  try {
+    console.log("req: ", req.query);
+    const { usc_id1, usc_id2 } = req.query; // Get the two USC IDs from the query parameters
+
+    console.log("Received USC IDs:", usc_id1, usc_id2);
+
+    if (!usc_id1 || !usc_id2) {
+      console.log("Error: Missing USC IDs");
+      return res.status(400).json({ error: "Both USC IDs are required" });
+    }
+
+    console.log("Fetching chat history from the database...");
+    console.log("TYPE : ", typeof(usc_id1));
+
+    // Retrieve chat history using the Chat model
+    const chatHistory = await Chat.find({
+      $or: [
+        { sender_usc_id: usc_id1, receiver_usc_id: usc_id2 },
+        { sender_usc_id: usc_id2, receiver_usc_id: usc_id1 }
+      ]
+    })
+      .sort({ timestamp: 1 }) // Sort by timestamp, ascending
+      .limit(100) // Optional: Limit the number of results
+      .exec();
+
+
+    console.log("Chat history retrieved:", chatHistory);
+
+    if (chatHistory.length === 0) {
+      console.log("No chat history found for the provided USC IDs.");
+      return res.status(400).json({ message: "No chat history found" });
+    }
+
+    // Return the chat history
+    console.log("Sending chat history response...");
+    res.json({ chatHistory });
+  } catch (err) {
+    console.error("Error occurred while retrieving chat history:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 
 
 module.exports = router;
