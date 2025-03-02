@@ -13,6 +13,7 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.json());
+app.use(cors({ origin: "http://localhost:5173" }));
 
 // Routes
 app.use("/api/users", require("./routes/userRoutes"));
