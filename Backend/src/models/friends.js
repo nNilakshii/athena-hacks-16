@@ -20,7 +20,7 @@ const friendsSchema = new mongoose.Schema({
     enum: [0, 1], // 0 or 1 flag
     default: 0 // 0 can represent 'pending', 1 can represent 'friends'
   }
-}, { timestamps: true });
+}, { timestamps: false });
 
 // Ensure the combination of usc_id and matching_id is unique
 friendsSchema.index({ usc_id: 1, matching_id: 1 }, { unique: true });

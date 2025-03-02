@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
     match: /^[0-9]{10}$/, // Ensures the field contains exactly 10 digits
     unique: true 
   }
-}, { timestamps: true });
+}, { timestamps: false });
 
 const User = mongoose.model('User', userSchema);
 
