@@ -1,12 +1,8 @@
-// const app = require("./app");
-const express = require("express");
+const app = require("./app"); // Import the app from app.js
 const connectDB = require("./config/db");
 
-
-const app = express();
 connectDB();
 
-app.use(express.json());
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
