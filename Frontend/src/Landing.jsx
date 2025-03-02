@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import "./Landing.css";
 
 const Landing = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -13,6 +13,8 @@ const Landing = () => {
     classes: "",
   });
 
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -20,10 +22,46 @@ const Landing = () => {
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    navigate('/home');
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   navigate('/home');
+  // };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault(); // Prevent page reload
+  
+    const endpoint = isLogin ? `${API_BASE_URL}/api/users/login` : `${API_BASE_URL}/api/users/save-profile`;
+    
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.message || "Something went wrong");
+      }
+  
+      console.log("Success:", data);
+  
+      if (isLogin) {
+        alert("Login Successful!");
+        // Store JWT or session data if needed
+      } else {
+        alert("Profile Created!");
+      }
+  
+    } catch (error) {
+      console.error("Error:", error);
+      alert(error.message);
+    }
   };
+  
 
   return (
     <div className={`landing-content ${isLogin ? 'login-mode' : 'signup-mode'}`}>
@@ -33,7 +71,7 @@ const Landing = () => {
           <img src="img/logo.png" alt="Commons Logo" className="commons-logo" />
         </div>
         <p className="brand-description">
-          Connect with students in your major, find study partners, and build your academic network.
+          Connect with students in your major, find study partners, and build your academic network!
         </p>
         <div className="auth-toggle">
           <button
