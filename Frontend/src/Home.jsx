@@ -17,108 +17,116 @@ const Home = () => {
   // Mock data for top recommendations
   const topRecommendations = [
     {
-      name: "ANAAYA MEHRA",
-      year: "Senior",
-      major: ["NEUROSCIENCE", "GLOBAL HEALTH"],
+      first_name: "ANAAYA",
+      last_name: "MEHRA",
+      current_year: "Senior",
+      dept: "NEUROSCIENCE",
       classes: "BISC 408",
       interests: ["Concerts", "Eating out", "Road trips"],
       image: "img/user.png",
-      isMentor: false
+      mentor: false
     },
     {
-      name: "ANAAYA MEHRA",
-      year: "Senior",
-      major: ["NEUROSCIENCE", "GLOBAL HEALTH"],
-      classes: "BISC 408",
-      interests: ["Concerts", "Eating out", "Road trips"],
+      first_name: "JOHN",
+      last_name: "SMITH",
+      current_year: "Senior",
+      dept: "COMPUTER SCIENCE",
+      classes: "CSCI 401",
+      interests: ["Programming", "Gaming", "Music"],
       image: "img/user.png",
-      isMentor: true
+      mentor: true
     },
     {
-      name: "ANAAYA MEHRA",
-      year: "Senior",
-      major: ["NEUROSCIENCE", "GLOBAL HEALTH"],
-      classes: "BISC 408",
-      interests: ["Concerts", "Eating out", "Road trips"],
+      first_name: "EMMA",
+      last_name: "WILSON",
+      current_year: "Junior",
+      dept: "PSYCHOLOGY",
+      classes: "PSYC 355",
+      interests: ["Research", "Reading", "Photography"],
       image: "img/user.png",
-      isMentor: false
+      mentor: false
     }
   ];
 
   // Mock data for other users
   const otherUsers = [
     {
-      name: "Sarah Chen",
-      year: "Junior",
-      major: ["COMPUTER SCIENCE"],
+      first_name: "Sarah",
+      last_name: "Chen",
+      current_year: "Junior",
+      dept: "COMPUTER SCIENCE",
       classes: "CSCI 401",
       interests: ["Coding", "Gaming", "Coffee"],
       image: "img/user.png",
-      isMentor: true
+      mentor: true
     },
     {
-      name: "Michael Park",
-      year: "Senior",
-      major: ["BUSINESS", "PSYCHOLOGY"],
+      first_name: "Michael",
+      last_name: "Park",
+      current_year: "Senior",
+      dept: "BUSINESS",
       classes: "BUAD 302",
       interests: ["Startups", "Reading", "Tennis"],
       image: "img/user.png",
-      isMentor: false
+      mentor: false
     },
     {
-      name: "Emily Rodriguez",
-      year: "Sophomore",
-      major: ["PSYCHOLOGY"],
+      first_name: "Emily",
+      last_name: "Rodriguez",
+      current_year: "Sophomore",
+      dept: "PSYCHOLOGY",
       classes: "PSYC 355",
       interests: ["Research", "Hiking", "Photography"],
       image: "img/user.png",
-      isMentor: true
+      mentor: true
     },
     {
-      name: "James Wilson",
-      year: "Junior",
-      major: ["GLOBAL HEALTH"],
+      first_name: "James",
+      last_name: "Wilson",
+      current_year: "Junior",
+      dept: "GLOBAL HEALTH",
       classes: "BISC 408",
       interests: ["Volunteering", "Travel", "Music"],
       image: "img/user.png",
-      isMentor: false
+      mentor: false
     },
     {
-      name: "Sophia Kim",
-      year: "Senior",
-      major: ["COMPUTER SCIENCE", "PSYCHOLOGY"],
+      first_name: "Sophia",
+      last_name: "Kim",
+      current_year: "Senior",
+      dept: "COMPUTER SCIENCE",
       classes: "CSCI 401",
       interests: ["AI", "Art", "Running"],
       image: "img/user.png",
-      isMentor: true
+      mentor: true
     },
     {
-      name: "David Thompson",
-      year: "Junior",
-      major: ["NEUROSCIENCE"],
+      first_name: "David",
+      last_name: "Thompson",
+      current_year: "Junior",
+      dept: "NEUROSCIENCE",
       classes: "BISC 408",
       interests: ["Research", "Basketball", "Cooking"],
       image: "img/user.png",
-      isMentor: false
+      mentor: false
     }
   ];
 
   const CommonCard = ({ user }) => (
-    <div className={`commons-card ${user.isMentor ? 'mentor-card' : ''}`}>
+    <div className={`commons-card ${user.mentor ? 'mentor-card' : ''}`}>
       <div className="card-header">
+        {user.mentor && <img src="img/mentor.png" alt="Mentor" className="mentor-badge" />}
         <img 
           src={user.image} 
-          alt={user.name} 
+          alt={`${user.first_name} ${user.last_name}`} 
           className="profile-image"
         />
-        <span className="year-tag">{user.year}</span>
+        <span className="year-tag">{user.current_year}</span>
       </div>
       <div className="profile-info">
-        <h3 className="profile-name">{user.name}</h3>
+        <h3 className="profile-name">{user.first_name} {user.last_name}</h3>
         <div className="tags-container">
-          {user.major.map((major, index) => (
-            <span key={index} className="tag">{major}</span>
-          ))}
+          <span className="tag">{user.dept}</span>
         </div>
         <div className="profile-details">
           <p className="profile-detail">
@@ -138,9 +146,9 @@ const Home = () => {
     setFilters(newFilters);
     
     return otherUsers.filter(user => {
-      if (newFilters.mentor && !user.isMentor) return false;
+      if (newFilters.mentor && !user.mentor) return false;
       if (newFilters.department !== "All Departments" && 
-          !user.major.some(m => m.toUpperCase() === newFilters.department.toUpperCase())) return false;
+          user.dept.toUpperCase() !== newFilters.department.toUpperCase()) return false;
       if (newFilters.class !== "All Classes" && user.classes !== newFilters.class) return false;
       return true;
     });

@@ -1,5 +1,9 @@
-const app = require("./app"); // Import the app from app.js
+let app = require("./app"); // Import the app from app.js
 const connectDB = require("./config/db");
+const cors = require("cors")
+const path = require("path")
+const express = require("express")
+
 
 connectDB();
 

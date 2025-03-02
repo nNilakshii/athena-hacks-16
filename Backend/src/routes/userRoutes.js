@@ -20,12 +20,12 @@ router.post(
     check("interests", "At least one interest is required").isArray().notEmpty(),
   ],
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
+    // const errors = validationResult(req);
+    // if (!errors.isEmpty()) {
+    //   return res.status(400).json({ errors: errors.array() });
+    // }
 
-    const { firstname, lastname, email, password, dept, classes, mentor, current_year, interests, usc_id } = req.body;
+    const { first_name, last_name, email, password, dept, classes, mentor, current_year, interests, usc_id } = req.body;
 
     try {
       // Check if the user already exists by email or usc_id
@@ -46,8 +46,8 @@ router.post(
 
       // Create the user
       user = new User({
-        firstname,
-        lastname,
+        first_name,
+        last_name,
         email,
         password: hashedPassword,
         dept,
@@ -78,12 +78,39 @@ router.post(
 // GET all users recommendations
 router.get("/get-friends", async (req, res) => {
   try {
-    const users = await User.find();
-    res.json(users);
+    console.log("req: ", req.query);
+    const { usc_id } = req.query; // Get the usc_id from the query parameters
+
+    if (!usc_id) {
+      return res.status(400).json({ error: "USC ID is required" });
+    }
+
+    // Find all friends with the given usc_id and status = 1 (friends)
+    const friends = await Friend.find({
+      $or: [
+        { usc_id: usc_id, status: 1 },
+        { matching_id: usc_id, status: 1 }
+      ]
+    });
+
+    // Extract matching IDs from the friends list
+    const matchingIds = friends.map(friend => 
+      friend.usc_id === usc_id ? friend.matching_id : friend.usc_id
+    );
+
+    // Query the User collection for matching users and return only firstname, lastname, and dept
+    const users = await User.find(
+      { usc_id: { $in: matchingIds } },
+      { firstname: 1, lastname: 1, dept: 1, _id: 0 } // Select only required fields
+    );
+
+    res.json({ friends: users });
   } catch (err) {
+    console.error("Error retrieving friends:", err.message);
     res.status(500).json({ error: err.message });
   }
 });
+
 
 // GET ALL PRESENT USER RECORDS
 // TO DO: INCORPORATE FILTERS FOR SEARCHING, get a flag from UI
@@ -152,6 +179,70 @@ router.get("/recommend-buddies",  async (req, res) => {
       res.status(500).json({ error: "Failed to fetch study buddy recommendations" });
     }
   });
+  router.post("/add-message", async (req, res) => {
+    try {
+      console.log("req.body: ", req.body);
+      
+      const { sender_usc_id, receiver_usc_id, message, message_type } = req.body;
+  
+      // Validate required fields
+      if (!sender_usc_id || !receiver_usc_id || !message) {
+        return res.status(400).json({ error: "Sender ID, Receiver ID, and Message are required" });
+      }
+  
+      console.log("Adding new message to the database...");
+  
+      // Create a new chat message
+      const newChat = new Chat({
+        sender_usc_id,
+        receiver_usc_id,
+        message,
+        message_type: message_type || "text", // Default to "text" if not provided
+        status: "sent", // Default message status
+        timestamp: new Date() // Set current timestamp
+      });
+  
+      // Save to database
+      await newChat.save();
+  
+      console.log("Message saved successfully:", newChat);
+  
+      res.status(201).json({ message: "Chat message added successfully", chat: newChat });
+    } catch (err) {
+      console.error("Error occurred while adding message:", err.message);
+      res.status(500).json({ error: err.message });
+    }
+  });
+  
 
+// LOGIN USER
+// Login Route
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    // Check if user exists
+    let user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ msg: "Invalid Credentials" });
+    }
+
+    // Compare passwords
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ msg: "Invalid Credentials" });
+    }
+
+    // Generate JWT Token
+    const payload = { user: { id: user.id } };
+    const token = jwt.sign(payload, process.env.JWT_KEY, { expiresIn: "1h" });
+
+    // Send token as response
+    res.json({ token });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
 
 module.exports = router;

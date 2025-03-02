@@ -3,16 +3,63 @@
   display: flex;
   flex-direction: column;
   background: #FDF6E8;
+  width: 100vw;
+  margin: 0;
+  overflow: hidden;
+  position: absolute;
+  left: 0;
+  top: 0;
+  box-sizing: border-box;
 }
 
 .friends-content {
-  flex: 1 0 auto;
-  max-width: 1200px;
-  margin: 0 auto;
+  flex: 1;
   padding: 2rem;
+  width: 100%;
+  box-sizing: border-box;
+  position: relative;
+  left: 0;
+  right: 0;
+}
+
+/* Tabs Styling */
+.friends-tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.tab-btn {
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1.1rem;
+  background: white;
+  color: #4F694C;
+}
+
+.tab-btn:hover {
+  background: #f8f8f8;
+}
+
+.tab-btn.active {
+  background: #4F694C;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(79, 105, 76, 0.2);
+}
+
+/* Main Content Layout */
+.friends-main {
   display: grid;
   grid-template-columns: 300px 1fr;
   gap: 2rem;
+  height: calc(100vh - 200px);
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 /* Friends List Styles */
@@ -22,6 +69,7 @@
   padding: 1.5rem;
   overflow-y: auto;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  height: 100%;
 }
 
 .friends-list h2 {
@@ -49,7 +97,8 @@
 }
 
 .friend-item.selected .friend-major,
-.friend-item.selected .last-message {
+.friend-item.selected .last-message,
+.friend-item.selected .request-time {
   color: rgba(255, 255, 255, 0.8);
 }
 
@@ -65,7 +114,8 @@
   color: #666;
 }
 
-.last-message {
+.last-message,
+.request-time {
   margin: 0;
   font-size: 0.9rem;
   color: #888;
@@ -74,15 +124,17 @@
   text-overflow: ellipsis;
 }
 
-/* Chat Section Styles */
-.chat-section {
+/* Content Section Styles */
+.content-section {
   background: white;
   border-radius: 15px;
   display: flex;
   flex-direction: column;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  height: 90%;
 }
 
+/* Chat Styles */
 .chat-header {
   padding: 1.5rem;
   border-bottom: 1px solid #eee;
@@ -184,24 +236,122 @@
   background: #3D5439;
 }
 
-.no-chat-selected {
+/* Profile View Styles */
+.profile-view {
+  padding: 2rem;
+  height: 100%;
+  overflow-y: auto;
+}
+
+
+.profile-header h3 {
+  margin: 0;
+  padding: 0;
+  color: #4F694C;
+  font-size: 1.5rem;
+}
+
+.profile-year {
+  margin: 0.5rem 0 0;
+  color: #666;
+  font-size: 1rem;
+}
+
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.detail-section {
+  background: #f8f8f8;
+  padding: 1rem;
+  border-radius: 12px;
+}
+
+.detail-section h4 {
+  margin: 0 0 1rem;
+  color: #4F694C;
+  font-size: 1.1rem;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tag {
+  background: #9CB97D;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+
+.request-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.accept-btn,
+.reject-btn {
+  flex: 1;
+  padding: 1rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.accept-btn {
+  background: #4F694C;
+  color: white;
+}
+
+.reject-btn {
+  background: #f8f8f8;
+  color: #666;
+}
+
+.accept-btn:hover {
+  background: #3D5439;
+}
+
+.reject-btn:hover {
+  background: #e0e0e0;
+}
+
+.no-selection {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100%;
   color: #666;
   font-size: 1.1rem;
+  text-align: center;
+  padding: 2rem;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
   .friends-content {
-    grid-template-columns: 1fr;
     padding: 1rem;
-    height: calc(100vh - 60px);
+  }
+
+  .friends-main {
+    grid-template-columns: 1fr;
+    height: auto;
+    gap: 1rem;
   }
 
   .friends-list {
     max-height: 300px;
+  }
+
+  .content-section {
+    height: 500px;
   }
 } 
